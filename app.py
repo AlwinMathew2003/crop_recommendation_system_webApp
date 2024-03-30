@@ -1,8 +1,8 @@
 from flask import Flask,render_template,request
 from sklearn import *
 import joblib
+# app = Flask(__name__,static_url_path='/static') #This tells Flask to serve static files from the /static URL path.
 app = Flask(__name__)
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -10,12 +10,19 @@ def index():
 def predict():
     list1=[]
     if request.method== 'POST':
-        for key in request.form:
-            list1.append(request.form[key])
+        list1=[
+            request.form['N'],
+            request.form['P'],
+            request.form['K'],
+            request.form['temperature'],
+            request.form['humidity'],
+            request.form['ph'],
+            request.form['rainfall']
+        ]
     arr=[list1]
     app=joblib.load('crop_app')
     crop=app.predict(arr)        
-    return render_template('index.html',prediction=crop[0])
+    return render_template('index.html',prediction=crop[0],form=request.form)
 
 if __name__=='__main__':
     app.run(debug=True)
@@ -40,3 +47,7 @@ if __name__=='__main__':
 # - `'password': 'password_entered_by_user'`
 
 # So, when you iterate over `request.form` with `for key in request.form:`, `key` will take on the values `'username'` and `'password'` in each iteration, allowing you to access the corresponding values entered by the user in the form fields.
+
+#if we want to input field to be filled after sumbit:
+#<input type="number" id="N" name="N" step="0.01" min="0" max="300" required {% if form and form.N %}value="{{ form.N }}"{% endif %}>
+#return render_template('index.html',prediction=crop[0],form=request.form)

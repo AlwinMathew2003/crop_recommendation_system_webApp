@@ -1,37 +1,169 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crop Recommendation System</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crop Recommendation System</title>
+<style>
+
+  .adjustment-bar-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+ .adjustment-bar {
+    width: 150px; /* Adjust width as needed */
+    margin-left: 10px; /* Adjust margin as needed */
+  }
+
+  ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover {
+  background-color: #111;
+}
+
+.navbar {
+    padding-bottom: 20px; /* Adjust the value as needed */
+}
+
+
+</style>
 </head>
 <body>
+    <div class="navbar">
+    <ul>
+        <li><a class="active" href="#home">Home</a></li>
+        <li><a href="#news">News</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+    </div>
+    <div class="form-wrapper">
+        <div class="form-container">
     <form action="http://127.0.0.1:5000/predict" method="POST">
-        <label>Enter the amount of Nitrogen:</label>
-    <p><input type="number" name="N" step="any" required></p>
-    
-    <label>Enter the amount of Phosphorous:</label>
-    <p><input type="number" name="P" step="any" required></p>
-    
-    <label>Enter the amount of Potassium:</label>
-    <p><input type="number" name="K" step="any" required></p>
-    
-    <label>Enter the amount of Temperature :</label>
-    <p><input type="number" name="temperature" step="any" required></p>
-    
-    <label>Enter the amount of Humidity:</label>
-    <p><input type="number" name="humidity" step="any" required></p>
-    
-    <label>Enter the amount of pH:</label>
-    <p><input type="number" name="ph" step="any" required></p>
-    
-    <label>Enter the amount of Rainfall:</label>
-    <p><input type="number" name="rainfall" step="any" required></p>
-    
+        <label>Enter the amount of Nitrogen (N):</label>
+        <div class="adjustment-bar-container">
+            <input type="number" id="N" name="N" step="0.01" min="0" max="300" required>
+            <input type="range" id="range-N" name="range-N" min="0" max="300" step="0.01" value="150" class="adjustment-bar">
+        </div>
+        
+        <label>Enter the amount of Phosphorus (P):</label>
+        <div class="adjustment-bar-container">
+            <input type="number" id="P" name="P" step="0.01" min="0" max="300" required>
+            <input type="range" id="range-P" name="range-P" min="0" max="300" step="0.01" value="150" class="adjustment-bar">
+        </div>
+        
+        <label>Enter the amount of Potassium (K):</label>
+        <div class="adjustment-bar-container">
+            <input type="number" id="K" name="K" step="0.01" min="0" max="300" required>
+            <input type="range" id="range-K" name="range-K" min="0" max="300" step="0.01" value="150" class="adjustment-bar">
+        </div>
+        
+        <label>Enter the temperature (°C):</label>
+        <div class="adjustment-bar-container">
+            <input type="number" id="temperature" name="temperature" step="0.01" min="-10" max="50" required>
+            <input type="range" id="range-temperature" name="range-temperature" min="-10" max="50" step="0.01" value="20" class="adjustment-bar">
+        </div>
+        
+        <label>Enter the humidity (%):</label>
+        <div class="adjustment-bar-container">
+            <input type="number" id="humidity" name="humidity" step="0.01" min="0" max="100" required>
+            <input type="range" id="range-humidity" name="range-humidity" min="0" max="100" step="0.01" value="50" class="adjustment-bar">
+        </div>
+        
+        <label>Enter the pH:</label>
+        <div class="adjustment-bar-container">
+            <input type="number" id="ph" name="ph" step="0.01" min="0" max="14" required>
+            <input type="range" id="range-ph" name="range-ph" min="0" max="14" step="0.01" value="7" class="adjustment-bar">
+        </div>
+        
+        <label>Enter the rainfall (mm):</label>
+        <div class="adjustment-bar-container">
+            <input type="number" id="rainfall" name="rainfall" step="0.01" min="0" max="500" required>
+            <input type="range" id="range-rainfall" name="range-rainfall" min="0" max="500" step="0.01" value="250" class="adjustment-bar">
+        </div>
+        
     <p><input type="submit" value="Submit"></p>
-    {%if prediction%}
-    <p>Result: The most suitable crop to grow is  <b>{{prediction}}</b></p>
-    {% endif %}
+ 
     </form>
+</div>
+</div>
+{%if prediction %}
+<p>Result: The most suitable crop to grow is  <b>{{prediction}}</b></p>
+{% endif %}
+
+<script>
+    const inputIds = ['N', 'P', 'K', 'temperature', 'humidity', 'ph', 'rainfall'];
+    const rangeIds = inputIds.map(id => 'range-' + id);
+
+    inputIds.forEach((inputId, index) => {
+        const input = document.getElementById(inputId);
+        const range = document.getElementById(rangeIds[index]);
+
+        input.addEventListener('input', function() {
+            range.value = this.value;
+            
+        });
+
+        range.addEventListener('input', function() {
+            input.value = this.value;
+
+        });
+    });
+</script>
 </body>
 </html>
+
+<!-- // Define an array of input IDs
+const inputIds = ['N', 'P', 'K', 'temperature', 'humidity', 'ph', 'rainfall'];
+
+// Map the input IDs to corresponding range input IDs
+const rangeIds = inputIds.map(id => 'range-' + id);
+
+// Iterate over each input ID
+inputIds.forEach((inputId, index) => {
+    // Get the input element by its ID
+    const input = document.getElementById(inputId);
+
+    // Get the range input element corresponding to the current input
+    const range = document.getElementById(rangeIds[index]);
+
+    // Add an event listener to the input element for input events (when the value changes)
+    input.addEventListener('input', function() {
+        // When the input value changes, update the value of the corresponding range input
+        range.value = this.value;
+
+        // Call the updateBrightness function (assuming it's defined elsewhere)
+        updateBrightness();
+    });
+
+    // Add an event listener to the range input element for input events
+    range.addEventListener('input', function() {
+        // When the range input value changes, update the value of the corresponding input element
+        input.value = this.value;
+
+        // Call the updateBrightness function
+        updateBrightness();
+    });
+});
+ -->
